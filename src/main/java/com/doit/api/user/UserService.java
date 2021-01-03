@@ -1,6 +1,7 @@
 package com.doit.api.user;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -10,31 +11,39 @@ import java.util.Optional;
 
 
 @Service
-@RequiredArgsConstructor
 public class UserService {
 
-    private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UserRepository userRepository;
 
     // TODO remove this
     @PostConstruct
+    // add some users if db is empty
     void init() {
-        createUser(User.builder()
-                .email("user@abc.com")
-                .isEnabled(true)
-                .isAccountNonExpired(true)
-                .isAccountNonLocked(true)
-                .isCredentialsNonExpired(true)
-                .password("user")
-                .build());
-        createUser(User.builder()
+        findByEmail("user@abc.com")
+        .map(user -> user)
+        .orElseGet(() -> createUser(
+                User.builder()
+                    .email("user@abc.com")
+                    .isEnabled(true)
+                    .isAccountNonExpired(true)
+                    .isAccountNonLocked(true)
+                    .isCredentialsNonExpired(true)
+                    .password("user")
+                    .build()));
+        findByEmail("admin@abc.com")
+        .map(user -> user)
+        .orElseGet(() -> createUser(User.builder()
                 .email("admin@abc.com")
                 .isEnabled(true)
                 .isAccountNonExpired(true)
                 .isAccountNonLocked(true)
                 .isCredentialsNonExpired(true)
                 .password("admin")
-                .build());
+                .build()));
     }
 
     // this is just an alias for spring security
