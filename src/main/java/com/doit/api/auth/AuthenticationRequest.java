@@ -1,15 +1,12 @@
-package com.doit.api.dto.auth;
+package com.doit.api.auth;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-
 @Data
 @NoArgsConstructor
-public class AuthenticationRequest implements Serializable {
+public class AuthenticationRequest {
 
     private String email;
     private String password;
-
 }
