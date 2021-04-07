@@ -18,9 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
 
     @Autowired
-    private UserDetailsLoader userDetailsLoader;
-
-    @Autowired
     private UserService userService;
 
     @Autowired
@@ -44,19 +41,15 @@ public class AuthenticationController {
                 .build();
         return ResponseEntity.ok(response);
 
-        // try {
-        //     Authentication a = authenticationManager.authenticate(
-        //             new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword()));
-        // } catch (BadCredentialsException e) {
-        //     throw new Exception("Incorrect email or password", e);
-        // }
-        // final UserDetails userDetails = (UserDetails) userDetailsLoader.loadUserByUsername(authenticationRequest.getEmail());
-        // final String jwt = jwtTokenUtil.generateToken(userDetails);
-        // return ResponseEntity.ok(new AuthenticationResponse(jwt , userDetails));
+//         try {
+//             Authentication a = authenticationManager.authenticate(
+//                     new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword()));
+//         } catch (BadCredentialsException e) {
+//             throw new Exception("Incorrect email or password", e);
+//         }
+//         final UserDetails userDetails = (UserDetails) userDetailsLoader.loadUserByUsername(authenticationRequest.getEmail());
+//         final String jwt = jwtTokenUtil.generateToken(userDetails);
+//         return ResponseEntity.ok(new AuthenticationResponse(jwt , userDetails));*/
     }
 
-    // @PostMapping("/signup")
-    // public User create(@RequestBody User user) {
-    //     return userService.createUser(user);
-    // }
 }

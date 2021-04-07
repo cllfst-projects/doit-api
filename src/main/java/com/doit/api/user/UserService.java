@@ -1,6 +1,11 @@
 package com.doit.api.user;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -10,56 +15,66 @@ import java.util.Optional;
 
 
 @Service
-public class UserService {
+@AllArgsConstructor
+public class UserService implements UserDetailsService {
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    // TODO remove this
+    public final static String USER_NOT_FOUND_MSG = "user with email %s not found";
+
+
     @PostConstruct
     // add some users if db is empty
     void init() {
-        findByEmail("user@abc.com")
-        .map(user -> user)
-        .orElseGet(() -> createUser(
-                User.builder()
-                    .email("user@abc.com")
-                    .isEnabled(true)
-                    .isAccountNonExpired(true)
-                    .isAccountNonLocked(true)
-                    .isCredentialsNonExpired(true)
-                    .password("user")
-                    .build()));
-        findByEmail("admin@abc.com")
-        .map(user -> user)
-        .orElseGet(() -> createUser(User.builder()
-                .email("admin@abc.com")
-                .isEnabled(true)
-                .isAccountNonExpired(true)
-                .isAccountNonLocked(true)
-                .isCredentialsNonExpired(true)
-                .password("admin")
-                .build()));
+
+        createUser(
+                new User(
+                        "sofiene",
+                        "thabet",
+                        "sof@gmail.com",
+                        "1234",
+                        UserRole.USER
+                )
+        );
+
+        createUser(
+                new User(
+                        "Ranim",
+                        "Naimi",
+                        "ranoum@gmail.com",
+                        "1234",
+                        UserRole.ADMIN
+                )
+
+        );
     }
 
-    // this is just an alias for spring security
-    public Optional<User> findByUsername(String username) {
-        return findByEmail(username);
+    @Override
+    public UserDetails loadUserByUsername(String email ) throws UsernameNotFoundException {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException(
+                                String.format(USER_NOT_FOUND_MSG, email)
+                        ));
     }
 
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public String createUser(User user) {
+        boolean userExists = userRepository.findByEmail(user.getEmail()).isPresent();
+
+        if (userExists) {
+            throw new IllegalStateException("email already exists."); // TODO: need better error handling
+        }
+
+        String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+
+        userRepository.save(user);
+
+        // TODO: Send confirmation token
+        return "CREATED";
     }
 
-	public void checkUserInput(User user) throws IllegalArgumentException {
-        throw new IllegalArgumentException("User input not valid");
-    }
-
-    public User createUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
-    }
 }
