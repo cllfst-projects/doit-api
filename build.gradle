@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.4.1'
 	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
 	id 'java'
+	id 'com.palantir.docker' version '0.26.0'
 }
 
 group = 'com.doit'
@@ -40,4 +41,13 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+}
+
+def gitShortCommit = 'git rev-parse --short HEAD'.execute().text.trim()
+
+docker {
+    name "zguesmi/${rootProject.name}:${version}-${gitShortCommit}"
+    dockerfile file('Dockerfile')
+    files("build/libs/${jar.archiveName}")
+    buildArgs([JAR_NAME: jar.archiveName ])
 }
