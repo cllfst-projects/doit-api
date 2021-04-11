@@ -48,6 +48,7 @@ def gitShortCommit = 'git rev-parse --short HEAD'.execute().text.trim()
 docker {
     name "zguesmi/${rootProject.name}:${version}-${gitShortCommit}"
     dockerfile file('Dockerfile')
+    tags 'dev'
     files("build/libs/${jar.archiveName}")
     buildArgs([JAR_NAME: jar.archiveName ])
 }
