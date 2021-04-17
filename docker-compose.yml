@@ -13,7 +13,7 @@ services:
     environment:
       - DB_HOST=doit-api-db
       - DB_NAME=${DB_NAME}
-      - DB_USER${DB_USER}
+      - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
     depends_on:
       - doit-api-db
