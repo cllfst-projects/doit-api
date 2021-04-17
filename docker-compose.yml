@@ -11,18 +11,19 @@ services:
     ports:
       - 8080:8080
     environment:
-      - DB_HOST=db
-      - DB_NAME
-      - DB_USER
-      - DB_PASSWORD
-    # depends_on:
-    #   db:
-    #     condition: service_healthy
+      - DB_HOST=doit-api-db
+      - DB_NAME=${DB_NAME}
+      - DB_USER${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      - doit-api-db
+      # doit-api-db:
+      #   condition: service_healthy
     restart: on-failure
 
-  db:
+  doit-api-db:
     image: mysql:5
-    container_name: db
+    container_name: doit-api-db
     # command: --default-authentication-plugin=mysql_native_password
     expose:
       - 3306
@@ -41,12 +42,13 @@ services:
           retries: 10
     restart: always
 
-  db-ui:
+  doit-api-db-ui:
     image: adminer:4.7.6
-    container_name: db-ui
+    container_name: doit-api-db-ui
     restart: always
-    # depends_on:
-    #   db:
-    #     condition: service_healthy
+    depends_on:
+      - doit-api-db
+      # doit-api-db:
+      #   condition: service_healthy
     ports:
       - 8081:8080
