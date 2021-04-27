@@ -1,65 +1,85 @@
 package com.doit.api.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-
+import java.util.List;
 import java.util.Optional;
 
-
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
+
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserRepository userRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    public UserService(BCryptPasswordEncoder bCryptPasswordEncoder, UserRepository userRepository) {
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.userRepository = userRepository;
+    }
 
-    @Autowired
-    private UserRepository userRepository;
-
-    // TODO remove this
     @PostConstruct
     // add some users if db is empty
     void init() {
-        findByEmail("user@abc.com")
-        .map(user -> user)
-        .orElseGet(() -> createUser(
-                User.builder()
-                    .email("user@abc.com")
-                    .isEnabled(true)
-                    .isAccountNonExpired(true)
-                    .isAccountNonLocked(true)
-                    .isCredentialsNonExpired(true)
-                    .password("user")
-                    .build()));
-        findByEmail("admin@abc.com")
-        .map(user -> user)
-        .orElseGet(() -> createUser(User.builder()
-                .email("admin@abc.com")
-                .isEnabled(true)
-                .isAccountNonExpired(true)
-                .isAccountNonLocked(true)
-                .isCredentialsNonExpired(true)
-                .password("admin")
-                .build()));
+
+        createUser(
+                new User(
+                        "sofiene",
+                        "thabet",
+                        "sof@gmail.com",
+                        "1234",
+                        UserRole.USER
+                )
+        );
+        createUser(
+                new User(
+                        "Ranim",
+                        "Naimi",
+                        "ranoum@gmail.com",
+                        "1234",
+                        UserRole.ADMIN
+                )
+
+        );
     }
 
-    // this is just an alias for spring security
-    public Optional<User> findByUsername(String username) {
-        return findByEmail(username);
+    @Override
+    public UserDetails loadUserByUsername(String email ) throws UsernameNotFoundException {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("user with email " + email + " not found"));
     }
 
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public String createUser(User user) {
+        boolean userExists = userRepository.findByEmail(user.getEmail()).isPresent();
+
+        if (userExists) {
+            return("email already exists.");
+        }
+
+        String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+
+        userRepository.save(user);
+
+        return "CREATED";
     }
 
-	public void checkUserInput(User user) throws IllegalArgumentException {
-        throw new IllegalArgumentException("User input not valid");
+    public String deleteUSer(long id) {
+        boolean exists = userRepository.existsById(id);
+        if (!exists){
+            return ("User does not exist!");
+        }
+        userRepository.deleteById(id);
+        return ("User deleted!");
     }
 
-    public User createUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+    public List<User> getUsers() {
+       return userRepository.findAll();
     }
 }
