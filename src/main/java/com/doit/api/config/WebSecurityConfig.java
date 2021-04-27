@@ -1,8 +1,6 @@
 package com.doit.api.config;
 
 import com.doit.api.user.UserService;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
@@ -24,9 +21,9 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public WebSecurityConfig(UserService userService,BCryptPasswordEncoder bCryptPasswordEncoder){
-        this.userService=userService;
-        this.bCryptPasswordEncoder=bCryptPasswordEncoder;
+    public WebSecurityConfig(UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.userService = userService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -42,10 +39,10 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // disable CSRF (cross site request forgery)
                 .csrf().disable()
                 .authorizeRequests()
-                        // allow only those endpoints to skip authorization control
-                        .antMatchers("/", "/signup", "/login","/user/delete/*","/user/all").permitAll()
-                        // control all other requests
-                        .anyRequest().authenticated()
+                // allow only those endpoints to skip authorization control
+                .antMatchers("/", "/signup", "/login", "/user/delete/*", "/user/all", "/items/post", "/items/all", "/items/*").permitAll()
+                // control all other requests
+                .anyRequest().authenticated()
                 // .and().exceptionHandling()
                 // no session will be created or used by spring security
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
