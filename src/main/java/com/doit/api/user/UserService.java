@@ -1,30 +1,27 @@
 package com.doit.api.user;
 
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-
+import java.util.List;
 import java.util.Optional;
 
-
 @Service
-@AllArgsConstructor
 public class UserService implements UserDetailsService {
 
-    @Autowired
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    @Autowired
     private final UserRepository userRepository;
 
-    public final static String USER_NOT_FOUND_MSG = "user with email %s not found";
-
+    @Autowired
+    public UserService(BCryptPasswordEncoder bCryptPasswordEncoder, UserRepository userRepository) {
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.userRepository = userRepository;
+    }
 
     @PostConstruct
     // add some users if db is empty
@@ -39,7 +36,6 @@ public class UserService implements UserDetailsService {
                         UserRole.USER
                 )
         );
-
         createUser(
                 new User(
                         "Ranim",
@@ -56,16 +52,14 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email ) throws UsernameNotFoundException {
         return userRepository.findByEmail(email)
                 .orElseThrow(() ->
-                        new UsernameNotFoundException(
-                                String.format(USER_NOT_FOUND_MSG, email)
-                        ));
+                        new UsernameNotFoundException("user with email " + email + " not found"));
     }
 
     public String createUser(User user) {
         boolean userExists = userRepository.findByEmail(user.getEmail()).isPresent();
 
         if (userExists) {
-            throw new IllegalStateException("email already exists."); // TODO: need better error handling
+            return("email already exists.");
         }
 
         String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
@@ -73,8 +67,19 @@ public class UserService implements UserDetailsService {
 
         userRepository.save(user);
 
-        // TODO: Send confirmation token
         return "CREATED";
     }
 
+    public String deleteUSer(long id) {
+        boolean exists = userRepository.existsById(id);
+        if (!exists){
+            return ("User does not exist!");
+        }
+        userRepository.deleteById(id);
+        return ("User deleted!");
+    }
+
+    public List<User> getUsers() {
+       return userRepository.findAll();
+    }
 }

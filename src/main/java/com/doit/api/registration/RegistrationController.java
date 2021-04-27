@@ -8,8 +8,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class RegistrationController {
 
+    private final RegistrationService registionService;
+
     @Autowired
-    private RegistrationService registionService;
+    public RegistrationController(RegistrationService registionService) {
+        this.registionService = registionService;
+    }
 
     @PostMapping("/signup")
     public String create(@RequestBody RegistrationRequest request) {

@@ -8,21 +8,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
 public class RegistrationService {
 
-    @Autowired
     private final UserService userService;
 
+    @Autowired
+    public RegistrationService(UserService userService) {
+        this.userService = userService;
+    }
+
     public String register(RegistrationRequest request) {
-        return userService.createUser(
-                new User(
-                        request.getFirstName(),
-                        request.getLastName(),
-                        request.getEmail(),
-                        request.getPassword(),
-                        UserRole.USER
-                )
-        );
+        User user = User.builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .email(request.getEmail())
+                .password(request.getPassword())
+                .userRole(UserRole.USER)
+                .build();
+        return userService.createUser(user);
     }
 }

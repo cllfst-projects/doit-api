@@ -1,5 +1,7 @@
 package com.doit.api.user;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,6 +16,8 @@ import java.util.Collections;
 @Entity
 @Data
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class User implements UserDetails {
 
 

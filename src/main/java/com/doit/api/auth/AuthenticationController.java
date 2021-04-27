@@ -17,14 +17,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthenticationController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtTokenUtil;
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtUtil jwtTokenUtil;
+    public AuthenticationController(UserService userService,AuthenticationManager authenticationManager,JwtUtil jwtTokenUtil){
+        this.userService=userService;
+        this.authenticationManager=authenticationManager;
+        this.jwtTokenUtil=jwtTokenUtil;
+    }
 
     @GetMapping("/")
     public ResponseEntity<HelloResponse> hello() {
