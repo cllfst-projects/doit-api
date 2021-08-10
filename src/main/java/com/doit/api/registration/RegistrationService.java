@@ -3,7 +3,6 @@ package com.doit.api.registration;
 import com.doit.api.user.User;
 import com.doit.api.user.UserRole;
 import com.doit.api.user.UserService;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +16,7 @@ public class RegistrationService {
         this.userService = userService;
     }
 
-    public String register(RegistrationRequest request) {
+    public Boolean register(RegistrationRequest request) {
         User user = User.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())

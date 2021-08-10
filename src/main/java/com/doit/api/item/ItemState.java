@@ -1,4 +1,4 @@
-package com.doit.api.Item;
+package com.doit.api.item;
 
 public enum ItemState {
     TODO,

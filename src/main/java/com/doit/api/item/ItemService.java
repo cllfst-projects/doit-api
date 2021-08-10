@@ -1,4 +1,4 @@
-package com.doit.api.Item;
+package com.doit.api.item;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,16 +16,19 @@ public class ItemService {
     }
 
     public String addItem(ItemRequest request) {
+        if (request == null) {
+            return "Please insert Item";
+        }
         Item item = Item.builder()
                 .name(request.getName())
                 .itemState(request.getItemState())
                 .build();
         boolean itemExists = itemRepository.findByName(item.getName()).isPresent();
-        if (item.getName().length() > 100)
+        if (item.getName().length() > 100) {
             return "TOO LARGE";
-        else if (itemExists)
+        } else if (itemExists) {
             return ("CONFLICT");
-        else {
+        } else {
             itemRepository.save(item);
             return "ADDED";
         }

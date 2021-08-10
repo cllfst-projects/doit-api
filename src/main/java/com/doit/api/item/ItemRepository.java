@@ -1,4 +1,4 @@
-package com.doit.api.Item;
+package com.doit.api.item;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

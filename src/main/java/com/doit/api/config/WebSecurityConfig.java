@@ -40,7 +40,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 // allow only those endpoints to skip authorization control
-                .antMatchers("/", "/signup", "/login", "/user/delete/*", "/user/all", "/items/post", "/items/all", "/items/*").permitAll()
+                .antMatchers("/", "/signup", "/login", "/users/delete/*", "/users/all", "/items/post", "/items/all", "/items/*").permitAll()
                 // control all other requests
                 .anyRequest().authenticated()
                 // .and().exceptionHandling()

@@ -1,6 +1,8 @@
 package com.doit.api.registration;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,7 +18,11 @@ public class RegistrationController {
     }
 
     @PostMapping("/signup")
-    public String create(@RequestBody RegistrationRequest request) {
-        return registionService.register(request);
+    public ResponseEntity<String> create(@RequestBody RegistrationRequest request) {
+        if (registionService.register(request)) {
+            return new ResponseEntity<>("user CREATED", HttpStatus.OK);
+        }
+        ;
+        return new ResponseEntity<>("email already exists", HttpStatus.CONFLICT);
     }
 }

@@ -1,4 +1,4 @@
-package com.doit.api.Item;
+package com.doit.api.item;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,7 +17,7 @@ public class ItemController {
         this.itemService = itemService;
     }
 
-    @PostMapping(path = "/post")
+    @PostMapping
     public ResponseEntity<String> postItem(@RequestBody ItemRequest itemRequest) {
         String response = itemService.addItem(itemRequest);
         if (response == "ADDED")
@@ -36,9 +36,9 @@ public class ItemController {
     @GetMapping(path = "/{itemId}")
     public ResponseEntity<Item> getItemById(@PathVariable long itemId) {
         Item item = itemService.getItem(itemId);
-        if (item != null)
+        if (item != null) {
             return new ResponseEntity<>(item, HttpStatus.OK);
-        else
-            return new ResponseEntity<>(item, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(item, HttpStatus.NOT_FOUND);
     }
 }

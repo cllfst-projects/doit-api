@@ -4,12 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -24,7 +23,7 @@ public class UserService implements UserDetailsService {
     }
 
     @PostConstruct
-    // add some users if db is empty
+        // add some users if db is empty
     void init() {
 
         createUser(
@@ -49,17 +48,17 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email ) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("user with email " + email + " not found"));
     }
 
-    public String createUser(User user) {
+    public boolean createUser(User user) {
         boolean userExists = userRepository.findByEmail(user.getEmail()).isPresent();
 
         if (userExists) {
-            return("email already exists.");
+            return false;
         }
 
         String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
@@ -67,19 +66,19 @@ public class UserService implements UserDetailsService {
 
         userRepository.save(user);
 
-        return "CREATED";
+        return true;
     }
 
-    public String deleteUSer(long id) {
+    public boolean deleteUser(long id) {
         boolean exists = userRepository.existsById(id);
-        if (!exists){
-            return ("User does not exist!");
+        if (!exists) {
+            return false;
         }
         userRepository.deleteById(id);
-        return ("User deleted!");
+        return true;
     }
 
     public List<User> getUsers() {
-       return userRepository.findAll();
+        return userRepository.findAll();
     }
 }
