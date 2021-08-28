@@ -1,8 +1,10 @@
 spring:
   datasource:
-    url: jdbc:mysql://${DB_HOST:localhost}:3306/${DB_NAME:doit-api}
-    username: ${DB_USER:user}
-    password: ${DB_PASSWORD:pass}
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/${DB_NAME:doit-api}?useUnicode=true
+      &useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&
+      serverTimezone=UTC
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:1234}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     # show-sql: true
