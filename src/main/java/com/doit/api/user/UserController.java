@@ -1,51 +1,35 @@
 package com.doit.api.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping(path = "/users")
 public class UserController {
 
+    private final UserService userService;
+
     @Autowired
-    private UserRepository userRepository;
-
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<User> getUser(@PathVariable("id") Long id) {
-        if (id == null) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        Optional<User> oUser = userRepository.findById(id);
-        if (oUser.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(oUser.get());
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    // @PostMapping(value = "/")
-    // public ResponseEntity<String> addUser(@RequestBody User user) {
-    //     try {
-    //         userService.checkUserInput(user);
-    //     } catch (Exception e) {
-    //         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-    //     }
-
-    //     User savedUser = userService.createUser(user);
-    //     return ResponseEntity.ok(savedUser.getEmail());
-    //     // URI userUri = new URI("/users/" + user.getUsername());
-    //     // return ResponseEntity.created().build();
-    // }
-
-    @GetMapping("/hello")
-    public String hello() {
-        return "<h1> Hello </h1>";
+    @DeleteMapping(path = "/delete/{id}")
+    public ResponseEntity<String> deleteUserById(@PathVariable long id) {
+        if (userService.deleteUser(id)) {
+            return new ResponseEntity<>("user deleted", HttpStatus.OK);
+        }
+        ;
+        return new ResponseEntity<>("user not found", HttpStatus.NOT_FOUND);
     }
+
+    @GetMapping(path = "/all")
+    public List<User> getUsers() {
+        return userService.getUsers();
+    }
+
 }
