@@ -22,8 +22,7 @@ public class UserController {
     public ResponseEntity<String> deleteUserById(@PathVariable long id) {
         if (userService.deleteUser(id)) {
             return new ResponseEntity<>("user deleted", HttpStatus.OK);
-        }
-        ;
+        };
         return new ResponseEntity<>("user not found", HttpStatus.NOT_FOUND);
     }
 

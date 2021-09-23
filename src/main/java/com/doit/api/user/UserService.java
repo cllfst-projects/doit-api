@@ -1,5 +1,6 @@
 package com.doit.api.user;
 
+import com.doit.api.project.Project;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -54,6 +55,14 @@ public class UserService implements UserDetailsService {
                         new UsernameNotFoundException("user with email " + email + " not found"));
     }
 
+    public User getUser(long id) {
+        User user= getUsers().stream()
+                .filter(t -> id == t.getId())
+                .findFirst()
+                .orElse(null);
+        return user;
+    }
+
     public boolean createUser(User user) {
         boolean userExists = userRepository.findByEmail(user.getEmail()).isPresent();
 
@@ -80,5 +89,9 @@ public class UserService implements UserDetailsService {
 
     public List<User> getUsers() {
         return userRepository.findAll();
+    }
+
+    public boolean projectExists(User user, String name) {
+        return user.getProjects().stream().anyMatch(p -> p.getName().equals(name));
     }
 }
