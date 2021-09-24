@@ -10,7 +10,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/projects")
 public class ProjectController {
-    private ProjectService projectService;
+    private final ProjectService projectService;
 
     @Autowired
     public ProjectController(ProjectService projectService) {
@@ -19,7 +19,7 @@ public class ProjectController {
 
     @PostMapping(path = "/{id}")
     public ResponseEntity<String> postProject(@RequestBody ProjectRequest projectRequest, @PathVariable long id) {
-        String response = projectService.addProject(projectRequest,id);
+        String response = projectService.addProject(projectRequest, id);
         if (response == "ADDED")
             return new ResponseEntity<>("ADDED", HttpStatus.OK);
         else if (response == "CONFLICT")

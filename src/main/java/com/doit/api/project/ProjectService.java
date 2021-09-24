@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -74,18 +73,7 @@ public class ProjectService {
         return (myProject);
     }
 
-//    @Transactional
-//    public boolean deleteItemsFromProject(long id) {
-//        boolean exists = projectRepository.existsById(id);
-//        if (!exists) {
-//            return false;
-//        }
-//        itemService.deleteItems(id);
-//        projectRepository.deleteById(id);
-//        return true;
-//    }
-
-    public boolean deleteProject(long id){
+    public boolean deleteProject(long id) {
         projectRepository.deleteById(id);
         return true;
     }

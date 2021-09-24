@@ -1,6 +1,5 @@
 package com.doit.api.item;
 
-import com.doit.api.project.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +10,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/items")
 public class ItemController {
-    private ItemService itemService;
+    private final ItemService itemService;
 
     @Autowired
     public ItemController(ItemService itemService) {

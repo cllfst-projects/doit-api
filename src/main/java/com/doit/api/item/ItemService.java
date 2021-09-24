@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ItemService {
@@ -92,15 +91,6 @@ public class ItemService {
         itemRepository.deleteById(itemId);
         return true;
     }
-
-//    public void deleteItems(long projectId){
-//        Project project = projectService.getProject(projectId);
-//        List<Long> ids = project.getItems().stream()
-//                .map(Item::getId)
-//                .collect(Collectors.toList());
-//        itemRepository.deleteItemsWithIds(ids);
-//        itemRepository.deleteByIdIn(ids);
-//    }
 
     public Item updateItem(Item item) {
         return itemRepository.save(item);

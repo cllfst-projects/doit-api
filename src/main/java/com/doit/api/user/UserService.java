@@ -1,6 +1,5 @@
 package com.doit.api.user;
 
-import com.doit.api.project.Project;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -56,7 +55,7 @@ public class UserService implements UserDetailsService {
     }
 
     public User getUser(long id) {
-        User user= getUsers().stream()
+        User user = getUsers().stream()
                 .filter(t -> id == t.getId())
                 .findFirst()
                 .orElse(null);
