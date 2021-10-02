@@ -1,28 +1,37 @@
 package com.doit.api.config;
 
-import com.doit.api.auth.UserDetailsLoader;
+import com.doit.api.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
+@Configuration
 @EnableWebSecurity
 class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private final UserService userService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Autowired
-    private UserDetailsLoader userDetailsLoader;
+    public WebSecurityConfig(UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.userService = userService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsLoader);
+        auth.userDetailsService(userService);
         auth.jdbcAuthentication();
     }
+
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -30,18 +39,22 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // disable CSRF (cross site request forgery)
                 .csrf().disable()
                 .authorizeRequests()
-                        // allow only those endpoints to skip authorization control
-                        .antMatchers("/", "/signup", "/login").permitAll()
-                        // control all other requests
-                        .anyRequest().authenticated()
+                // allow only those endpoints to skip authorization control
+                .antMatchers("/", "/signup", "/login", "/users/delete/*", "/users/all", "/items/post", "/items/all", "/items/*").permitAll()
+                // control all other requests
+                .anyRequest().authenticated()
                 // .and().exceptionHandling()
                 // no session will be created or used by spring security
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
+
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(bCryptPasswordEncoder);
+        provider.setUserDetailsService(userService);
+        return provider;
     }
 
     @Override
